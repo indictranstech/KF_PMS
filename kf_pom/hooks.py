@@ -32,9 +32,17 @@ app_license = "MIT"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+			  "Item":"kf_pom/custom_script/item/item.js",
+			  "Supplier":"kf_pom/custom_script/supplier/supplier.js",
+			  "Material Request":"kf_pom/custom_script/material_request/material_request.js",
+			  "Purchase Order":"kf_pom/custom_script/purchase_order/purchase_order.js"
+			}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+
+fixtures = ['Role','Workflow', 'Workflow State', 'Workflow Action','Custom Field']
 
 # Home Pages
 # ----------
