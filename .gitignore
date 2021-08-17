@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+*.egg-info
+*.swp
+tags
+kf_pom/docs/current

@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "autoname": "field:sub_category",
+ "creation": "2021-08-16 14:34:58.898105",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "category",
+  "sub_category"
+ ],
+ "fields": [
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "Category",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sub_category",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Sub Category",
+   "reqd": 1,
+   "unique": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-08-17 10:07:49.827243",
+ "modified_by": "Administrator",
+ "module": "KF_POM",
+ "name": "Sub Category",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
