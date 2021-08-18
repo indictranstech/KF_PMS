@@ -7,5 +7,14 @@ frappe.ui.form.on("Purchase Order",{
 						]
 			}
 		}	
-	}
+	},
+	validate:function(frm){
+        var from_date=new Date(frm.doc.po_validity_from_date);
+        var to_date=new Date(frm.doc.po_validity_to_date);
+    	if (from_date && to_date){
+    		if (from_date>to_date){
+    			frappe.throw("From Date Should not Exceed To Date")
+    		}
+    	}
+    }
 });
