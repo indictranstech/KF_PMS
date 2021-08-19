@@ -6,6 +6,21 @@ frappe.ui.form.on("Purchase Order",{
 		            		['Sub Category','category', '=', frm.doc.category]
 						]
 			}
+		}
+		if(frm.doc.workflow_state == 'Vendor Approved' && frappe.user.has_role('Vendor')) {
+			//show print option 
+		} else if (frm.doc.workflow_state != 'Vendor Approved' && frappe.user.has_role('Vendor')){
+			//hide print option 
+			$('.text-muted.btn.btn-default.icon-btn[data-original-title="Print"]').hide()
+		}
+
+	},
+	onload:function(frm){
+		if(frm.doc.workflow_state == 'Vendor Approved' && frappe.user.has_role('Vendor')) {
+			//show print option 
+		} else if (frm.doc.workflow_state != 'Vendor Approved' && frappe.user.has_role('Vendor')){
+			//hide print option 
+			$('.text-muted.btn.btn-default.icon-btn[data-original-title="Print"]').hide()
 		}	
 	},
 	validate:function(frm){
