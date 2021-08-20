@@ -3,6 +3,9 @@ frappe.ui.form.on("Material Request",{
 		if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
+        } 
+        else {
+            $('.timeline-items').refresh()
         }
 		
 		cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
@@ -11,7 +14,13 @@ frappe.ui.form.on("Material Request",{
 		            		['Sub Category','category', '=', frm.doc.category]
 						]
 			}
-		}	
+		}
+        if(frappe.user.has_role('Requestor/Site Manager')) {
+            frm.set_df_property('approver_comments','read_only',1)
+        }
+        if((frm.doc.workflow_state=="Rejected by Procurement Approver"||frm.doc.workflow_state=="Submitted by Requestor") && frappe.user.has_role('Commercial Approver')) {
+            frm.set_df_property('approver_comments','reqd',1)
+        }
 	},
 	onload:function(frm) {
         if(frm.is_new()) {

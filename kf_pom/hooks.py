@@ -104,7 +104,14 @@ fixtures = ['Role','Workflow', 'Workflow State', 'Workflow Action','Custom Field
 # 		"on_trash": "method"
 #	}
 # }
-
+doc_events = {
+	"Material Request": {
+		"validate": "kf_pom.kf_pom.custom_script.material_request.material_request.validate"
+	},
+	"Purchase Order": {
+		"validate": "kf_pom.kf_pom.custom_script.purchase_order.purchase_order.validate"
+	}
+}
 # Scheduled Tasks
 # ---------------
 
