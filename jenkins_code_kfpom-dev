@@ -1,11 +1,11 @@
 //Designed by Ajay Salunkhe for auto deployment after Pull Request merge on Github 
 
 def remote = [:]
-remote.name = "kfpom"
+remote.name = "indictrans"
 remote.host = "163.172.116.173"
 remote.port = 1995
 remote.allowAnyHosts = true
-remote.user = 'kfpom'
+remote.user = 'indictrans'
 //identityFile Path Change According to Location on Server for privatekey
 remote.identityFile = '/home/indictrans/Auto_Deployment_scripts/pulluser_indictrans_server'
 
