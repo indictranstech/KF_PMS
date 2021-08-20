@@ -1,0 +1,162 @@
+//Designed by Ajay Salunkhe for auto deployment after Pull Request merge on Github 
+
+def remote = [:]
+remote.name = "kfpom"
+remote.host = "163.172.116.173"
+remote.port = 1995
+remote.allowAnyHosts = true
+remote.user = 'kfpom'
+//identityFile Path Change According to Location on Server for privatekey
+remote.identityFile = '/home/indictrans/Auto_Deployment_scripts/pulluser_indictrans_server'
+
+pipeline {
+    agent any 
+    stages {
+        stage('Project Directory Check') {
+            steps {
+                script{
+                echo 'Checking Project Directory Status...'
+                echo "Running ${env.BUILD_ID} ${env.BUILD_DISPLAY_NAME} on ${env.NODE_NAME} and JOB ${env.JOB_NAME}"
+                sshCommand remote: remote, command: ''' 
+                    cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                    source ../bin/activate;
+                    echo '************** kfpom Erp App **************';
+                    cd apps/kf_pom && pwd;
+                    if [ 0 -eq `git status --porcelain|wc -l` ]; then 
+                        echo ':::::::: No Changes On server ::::::::'; 
+                    else 
+                      echo ':::::::: Changes Present ::::::::';
+                      git status;
+                      git diff . ;
+                      git stash; 
+                    fi;
+                    '''
+                  }
+            }
+        }
+        stage('Storing Last Git Log') { 
+            steps {
+                echo 'Last Gitlog Status checking .....'
+                echo "Running ${env.BUILD_ID} ${env.BUILD_DISPLAY_NAME} on ${env.NODE_NAME} and JOB ${env.JOB_NAME}"
+                script {
+                        sshCommand remote: remote, command: ''' 
+                                  cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                                  source ../bin/activate;
+                                  echo '************** kfpom Erp App **************';
+                                  cd apps/kf_pom && pwd;
+                                  git log --max-count=3 --no-merges;
+                                  '''
+                        }
+                }
+            
+        }
+        stage('Deploying Updated Changes') { 
+            steps {
+                script {
+                    echo 'updating latest codebase .....'
+                    echo "Running ${env.BUILD_ID} ${env.BUILD_DISPLAY_NAME} on ${env.NODE_NAME} and JOB ${env.JOB_NAME}"
+                    withCredentials([usernamePassword(credentialsId: 'stellapps-git-user',  passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+
+                                                sshCommand remote: remote, command: ''' 
+                                                cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                                                source ../bin/activate;
+                                                echo '************** kfpom Erp App **************';
+                                                cd apps/kf_pom && pwd;
+                                                branch=`git rev-parse --abbrev-ref HEAD`;
+                                                echo $branch;
+                                                git pull upstream $branch;                                       
+                                                '''
+                          }
+                }
+            }
+        }
+        stage('Migrating Changes to Database') { 
+            steps {
+                        echo 'updating latest codebase .....'
+                        echo "Running ${env.BUILD_ID} ${env.BUILD_DISPLAY_NAME} on ${env.NODE_NAME} and JOB ${env.JOB_NAME}"
+                        script {
+                            stage('Frappe-bench Folder (Migarting ..)') {
+                                  echo 'bench migrating current database .....'
+                                                sshCommand remote: remote, command: ''' 
+                                                cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                                                source ../bin/activate;
+                                                bench --site all migrate;
+                                                '''
+                              }
+                              stage('Frappe-bench Folder (building ..)') {
+                                  echo 'bench migrating current database .....'
+                                                sshCommand remote: remote, command: ''' 
+                                                cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                                                source ../bin/activate;
+                                                bench --site all build;
+                                                '''
+                              }
+                              stage('Frappe-bench Folder (clearing cache ...)') {
+                                  echo 'bench migrating current database .....'
+                                                sshCommand remote: remote, command: ''' 
+                                                cd /home/indictrans/webapps/kfpom.indictranstech.com/frappe-bench;
+                                                source ../bin/activate;
+                                                bench --site all clear-cache;
+                                                bench --site all clear-website-cache;
+                                                '''
+                              }
+                        } 
+            }
+        }
+        stage('Service Restarting Junction') { 
+            steps {
+                echo 'updating latest codebase .....'
+                        echo "Running ${env.BUILD_ID} ${env.BUILD_DISPLAY_NAME} on ${env.NODE_NAME} and JOB ${env.JOB_NAME}"
+                        script {
+                            stage('Nginx Syntax Checking') {
+                                  echo 'Nginx Syntaxing ..'
+                                                sshCommand remote: remote, command: ''' 
+                                                sudo nginx -t;
+                                                '''
+                              }
+                              stage('Nginx Service Reloading') {
+                                  echo 'Nginx Syntaxing ..'
+                                                sshCommand remote: remote, command: ''' 
+                                                sudo service nginx reload;
+                                                '''
+                              }
+                              stage('Supervisor Staus Checking') {
+                                  echo 'Supervisor Status Checking ..'
+                                                sshCommand remote: remote, command: ''' 
+                                                sudo supervisorctl status;
+                                                '''
+                              }
+                              stage('Supervisor restarting') {
+                                  echo 'Supervisor restarting all gunicorn ..'
+                                                sshCommand remote: remote, command: ''' 
+                                                sudo supervisorctl restart all;
+                                                '''
+                              }
+                              
+                        }   
+            }
+        }
+        
+    }
+     environment {
+        EMAIL_TO = 'shrikant.d@indictranstech.com,ajay.s@indictranstech.com, shraddha.r@indictranstech.com, archana.k@indictranstech.com, devteam@indictranstech.com'
+    }
+    post {
+      //steps {
+
+            success {
+            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=10000, escapeHtml=false}', 
+                    to: "${EMAIL_TO}", 
+                    subject: 'Build Success in Jenkins: $PROJECT_NAME - ${BUILD_NUMBER} ' 
+
+
+            }
+            failure {
+            emailext body: 'Check console output at $BUILD_URL to view the results. \n\n ${CHANGES} \n\n -------------------------------------------------- \n${BUILD_LOG, maxLines=10000, escapeHtml=false}', 
+                  to: "${EMAIL_TO}", 
+                  subject: 'Build failed in Jenkins: $PROJECT_NAME - ${BUILD_NUMBER} ' 
+            }
+
+
+      }
+  }
