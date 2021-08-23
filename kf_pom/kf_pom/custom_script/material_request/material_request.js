@@ -4,9 +4,6 @@ frappe.ui.form.on("Material Request",{
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
         } 
-        else {
-            $('.timeline-items').refresh()
-        }
 		
 		cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
 		    return {
