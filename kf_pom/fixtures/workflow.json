@@ -4,13 +4,13 @@
   "doctype": "Workflow",
   "document_type": "Material Request",
   "is_active": 1,
-  "modified": "2021-08-19 10:55:38.415159",
+  "modified": "2021-08-24 17:05:13.049048",
   "name": "Material Request",
   "override_status": 0,
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "send_email_alert": 1,
+  "send_email_alert": 0,
   "states": [
    {
     "allow_edit": "Requestor/Site Manager",
@@ -189,13 +189,13 @@
   "doctype": "Workflow",
   "document_type": "Purchase Order",
   "is_active": 1,
-  "modified": "2021-08-18 21:02:24.440551",
+  "modified": "2021-08-24 17:05:22.026750",
   "name": "Purchase Order",
   "override_status": 0,
   "parent": null,
   "parentfield": null,
   "parenttype": null,
-  "send_email_alert": 1,
+  "send_email_alert": 0,
   "states": [
    {
     "allow_edit": "Procurement  Approver",
