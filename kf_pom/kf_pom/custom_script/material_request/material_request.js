@@ -38,6 +38,41 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_no","9999911111")
 
         }
+        // frm.set_query('billing_address', function(doc) {
+
+        //     return {
+        //         query: 'frappe.contacts.doctype.address.address.address_query',
+        //         filters: {
+        //             link_doctype: 'Company',
+        //             link_name: doc.company
+        //         }
+        //     };
+        // });
+        frm.set_query('kf_customer_shipping_address', function(doc) {
+            if(!doc.kf_customer) {
+                frappe.throw(_('Please select Customer'));
+            }
+
+            return {
+                query: 'frappe.contacts.doctype.address.address.address_query',
+                filters: {
+                    link_doctype: 'Customer',
+                    link_name: doc.kf_customer
+                }
+            };
+        });
+    },
+    company: function(frm) {
+        frm.set_query('billing_address', function(doc) {
+
+            return {
+                query: 'frappe.contacts.doctype.address.address.address_query',
+                filters: {
+                    link_doctype: 'Company',
+                    link_name: doc.company
+                }
+            };
+        });
     },
     kf_customer: function(frm){
         //to filter customer addresses in drop-down
@@ -58,7 +93,7 @@ frappe.ui.form.on("Material Request",{
         });
     },
     kf_customer_shipping_address: function(frm) {
-        //to frtch customer address on PO
+        //to fetch customer address on PO
         if(frm.doc.kf_customer_shipping_address) {
             frappe.call({
                 method: "frappe.contacts.doctype.address.address.get_address_display",
@@ -70,16 +105,19 @@ frappe.ui.form.on("Material Request",{
                     }
                 }
             })
+
+            //to fetch the sub location from customer address on PO
+            frappe.db.get_value('Address',frm.doc.kf_customer_shipping_address,'sub_location')
+            .then(r =>{
+                if(r.message){
+                    frm.set_value('kf_sub_location',r.message.sub_location)
+                }
+            })
         } else {
             frm.set_value("kf_customer_shipping_address_display", "");
+            frm.set_value('kf_sub_location',"")
         }
-        //to fetch the sub location from customer address on PO
-        frappe.db.get_value('Address',frm.doc.kf_customer_shipping_address,'sub_location')
-        .then(r =>{
-            if(r.message){
-                frm.set_value('kf_sub_location',r.message.sub_location)
-            }
-        })
+        
     },
     requestor_email: function(frm) {
         //set requestor mobile no
