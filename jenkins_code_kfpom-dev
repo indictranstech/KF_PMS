@@ -129,7 +129,7 @@ pipeline {
                               stage('Supervisor restarting') {
                                   echo 'Supervisor restarting all gunicorn ..'
                                                 sshCommand remote: remote, command: ''' 
-                                                sudo supervisorctl restart all;
+                                                sudo supervisorctl kfpom-frappe-bench-web:*;
                                                 '''
                               }
                               
