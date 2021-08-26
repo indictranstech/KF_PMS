@@ -36,7 +36,8 @@ doctype_js = {
 			  "Item":"kf_pom/custom_script/item/item.js",
 			  "Supplier":"kf_pom/custom_script/supplier/supplier.js",
 			  "Material Request":"kf_pom/custom_script/material_request/material_request.js",
-			  "Purchase Order":"kf_pom/custom_script/purchase_order/purchase_order.js"
+			  "Purchase Order":"kf_pom/custom_script/purchase_order/purchase_order.js",
+			  "Address":"kf_pom/custom_script/address/address.js"
 			}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -80,6 +81,9 @@ fixtures = ['Role','Workflow', 'Workflow State', 'Workflow Action','Custom Field
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
+permission_query_conditions = {
+	"Material Request": "kf_pom.kf_pom.custom_script.material_request.material_request.get_permission_query_conditions",
+}
 #
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
