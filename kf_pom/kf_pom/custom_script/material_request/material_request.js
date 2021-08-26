@@ -107,15 +107,17 @@ frappe.ui.form.on("Material Request",{
             })
 
             //to fetch the sub location from customer address on PO
-            frappe.db.get_value('Address',frm.doc.kf_customer_shipping_address,'sub_location')
+            frappe.db.get_value('Address',frm.doc.kf_customer_shipping_address,['sub_location','commercial_approver'])
             .then(r =>{
                 if(r.message){
                     frm.set_value('kf_sub_location',r.message.sub_location)
+                    frm.set_value('commercial_approver',r.message.commercial_approver)
                 }
             })
         } else {
             frm.set_value("kf_customer_shipping_address_display", "");
             frm.set_value('kf_sub_location',"")
+            frm.set_value('commercial_approver',"")
         }
         
     },
