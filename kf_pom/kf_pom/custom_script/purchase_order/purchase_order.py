@@ -28,7 +28,7 @@ def validate(doc,method=None):
 	base_url_dev = "http://kfpom-dev.indictranstech.com/app"
 	if 'Procurement  Approver' in frappe.get_roles() and doc.workflow_state == 'Submitted by Procurement Approver':
 		director_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Director Approver'""")
-		r_email = director_appr
+		r_email = director_appr[0][0]
 		url = base_url_dev + "/purchase-order/" + doc.name
 		subject = """Purchase Order %s is submitted for Approval by %s"""%(doc.name,get_user_fullname(doc.modified_by))
 		msg = """Dear %s, <br> The Purchase Order %s is submitted for your approval by %s.
@@ -37,14 +37,14 @@ def validate(doc,method=None):
 		frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Director Approver Approved':
-		proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement Approver'""")
+		proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement  Approver'""")
 		subject = """You are awarded Purchase Order %s."""%(doc.name)
 		vendor_email = frappe.db.sql("""
 				Select email_id from `tabAddress` where name = %s
 			""",(doc.supplier_address))
 
-		r_email = vendor_email
-		cc_email = proc_appr 
+		r_email = vendor_email[0][0]
+		cc_email = proc_appr[0][0]
 		items = ""
 		for item in doc.items:
 			items = items + "+" + item.item_name
@@ -54,12 +54,12 @@ def validate(doc,method=None):
 		<br>
 		Please login and acknowledge the PO to be able to download PDF copy of the PO.
 		<br> Link: %s
-		"""%(get_user_fullname(vendor_email),doc.name,items[1:],url)
+		"""%(get_user_fullname(vendor_email[0][0]),doc.name,items[1:],url)
 		frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Rejected by Director Approver':
 		proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement  Approver'""")
-		r_email = proc_appr
+		r_email = proc_appr[0][0]
 		comments = frappe.db.sql(''' 
 			Select content from `tabComment` where reference_doctype='Purchase Order' 
 			and reference_name=%s 
