@@ -2072,5 +2072,22 @@
   "property_type": "Data",
   "row_name": null,
   "value": "Purchase Order"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Item",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "is_stock_item",
+  "modified": "2021-08-27 12:48:41.742059",
+  "name": "Item-is_stock_item-default",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "default",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "0"
  }
 ]
