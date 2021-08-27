@@ -46,7 +46,7 @@ def validate(doc,method=None):
 		r_email = proc_appr[0][0]
 		cc_email = doc.requestor_email 
 		url = base_url_dev + "/material-request/" + doc.name
-		subject = """Purchase Requisition for %s - %s submitted for your Approval by %s"""%(doc.kf_customer.doc.name,get_user_fullname(doc.modified_by))
+		subject = """Purchase Requisition for %s - %s submitted for your Approval by %s"""%(doc.kf_customer,doc.name,get_user_fullname(doc.modified_by))
 		msg = """Dear %s, <br> The Purchase Requisition %s is submitted for your approval by %s.
 		<br> Link: %s
 		"""%(get_user_fullname(r_email),doc.name,get_user_fullname(doc.modified_by),url)
