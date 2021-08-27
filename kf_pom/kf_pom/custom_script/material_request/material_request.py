@@ -43,8 +43,6 @@ def validate(doc,method=None):
 		frappe.sendmail(recipients=r_email,cc=cc_email,subject= subject,content=msg)
 
 	if 'Commercial Approver' in frappe.get_roles() and doc.workflow_state == 'Commercial Approver Approved':
-		# proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement  Approver'""")
-		# r_email = proc_appr[0][0]
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
 		cc_email = doc.requestor_email 
 		url = base_url_dev + "/material-request/" + doc.name
