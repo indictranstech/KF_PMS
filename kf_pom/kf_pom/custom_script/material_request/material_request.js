@@ -38,16 +38,6 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_no","9999911111")
 
         }
-        // frm.set_query('billing_address', function(doc) {
-
-        //     return {
-        //         query: 'frappe.contacts.doctype.address.address.address_query',
-        //         filters: {
-        //             link_doctype: 'Company',
-        //             link_name: doc.company
-        //         }
-        //     };
-        // });
         frm.set_query('kf_customer_shipping_address', function(doc) {
             if(!doc.kf_customer) {
                 frappe.throw(_('Please select Customer'));
@@ -73,6 +63,13 @@ frappe.ui.form.on("Material Request",{
                 }
             };
         });
+    },
+    billing_address:function(frm) {
+        if(frm.doc.billing_address) {
+            frm.set_value('company_billing_add',frm.doc.billing_address)
+        } else {
+            frm.set_value('company_billing_add','')
+        }
     },
     kf_customer: function(frm){
         //to filter customer addresses in drop-down

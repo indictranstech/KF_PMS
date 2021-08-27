@@ -35,6 +35,9 @@ frappe.ui.form.on("Purchase Order",{
 			frm.set_value("kf_contact_email","Sarvesh.Tiwari@in.knightfrank.com")
 			frm.set_value("kf_contact_no","9999911111")
 
+			if(frm.doc.company_billing_add){
+				frm.set_value('billing_address',frm.doc.company_billing_add)
+			}
 		}
 		if(frm.doc.workflow_state == 'Vendor Approved' && frappe.user.has_role('Vendor')) {
 			//show print option 
@@ -48,6 +51,16 @@ frappe.ui.form.on("Purchase Order",{
 			//hide comment box
 			$('.comment-box').hide();
 			frm.set_df_property("approver_comments","hidden",1)
+		}
+	},
+	company_billing_add:function(frm) {
+		if(frm.doc.company_billing_add) {
+			frm.set_value('billing_address',frm.doc.company_billing_add)
+		}
+	},
+	supplier: function(frm){
+		if(frm.doc.company_billing_add) {
+			frm.set_value('billing_address',frm.doc.company_billing_add)
 		}
 	},
 	validate:function(frm){

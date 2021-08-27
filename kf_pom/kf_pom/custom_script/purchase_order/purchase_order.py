@@ -27,27 +27,21 @@ def validate(doc,method=None):
 	from frappe.utils import get_url	
 	base_url_dev = get_url() + "/app" 
 	if 'Procurement  Approver' in frappe.get_roles() and doc.workflow_state == 'Submitted by Procurement Approver':
-		# director_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Director Approver'""")
-		# r_email = director_appr[0][0]
 		r_email = frappe.db.get_value('Has Role',{'role': 'Director Approver'},['parent'])
 		url = base_url_dev + "/purchase-order/" + doc.name
-		subject = """Purchase Order %s has been submitted for Approval by %s"""%(doc.name,get_user_fullname(doc.modified_by))
-		msg = """Hello %s, <br> The Purchase Order %s has been submitted for your approval by %s.
+		pr_no = doc.items[0].material_request
+		subject = """Purchase Order %s has been submitted for Approval by %s for PR %s"""%(doc.name,get_user_fullname(doc.modified_by),pr_no)
+		msg = """Hello %s, <br> The Purchase Order %s has been submitted for your approval by %s for PR %s.
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
-		"""%(get_user_fullname(r_email),doc.name,get_user_fullname(doc.modified_by),url)
+		"""%(get_user_fullname(r_email),doc.name,get_user_fullname(doc.modified_by),pr_no,url)
 		frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Director Approver Approved':
-		# proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement  Approver'""")
-		# vendor_email = frappe.db.sql("""
-		# 		Select email_id from `tabAddress` where name = %s
-		# 	""",(doc.supplier_address))
-		# r_email = vendor_email[0][0]
-		# cc_email = proc_appr[0][0]
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
 		vendor_email = frappe.db.get_value('Address',{'name': doc.supplier_address},['email_id'])
 		cc_email = vendor_email
 		subject = """You are awarded Purchase Order %s."""%(doc.name)
+		pr_no = doc.items[0].material_request
 		items = ""
 		for item in doc.items:
 			items = items + "+" + item.item_name
@@ -57,14 +51,12 @@ def validate(doc,method=None):
 		<br>
 		Please login and acknowledge the PO to be able to download PDF copy of the PO.
 		<br> Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
-		"""%(get_user_fullname(vendor_email),doc.name,items[1:],url)
+		"""%(get_user_fullname(vendor_email),doc.name,pr_no,url)
 		frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Rejected by Director Approver':
-		# proc_appr = frappe.db.sql("""Select parent from `tabHas Role` where role = 'Procurement  Approver'""")
-		# r_email = proc_appr[0][0]
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
-
+		
 		comments = frappe.db.sql(''' 
 			Select content from `tabComment` where reference_doctype='Purchase Order' 
 			and reference_name=%s 
