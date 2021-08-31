@@ -30,6 +30,7 @@ frappe.ui.form.on("Material Request",{
         if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
+            frm.set_value('schedule_date',frappe.datetime.add_days(frappe.datetime.get_today(), 3))
         }
         if(frm.is_new()){
             frm.set_value("tc_name",'Standard Template')
@@ -137,5 +138,11 @@ frappe.ui.form.on("Material Request",{
     			frappe.throw("From Date Should not Exceed To Date")
     		}
     	}
+        //To calculate and update the Grand total on save
+        var grand_total = 0;
+        for (var i=0; i<frm.doc.items.length;i++) {
+            grand_total = grand_total + frm.doc.items[i].amount;
+        }
+        frm.set_value('grand_total',grand_total)
     }
 });

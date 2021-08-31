@@ -83,6 +83,7 @@ fixtures = ['Role','Workflow', 'Workflow State', 'Workflow Action','Custom Field
 # }
 permission_query_conditions = {
 	"Material Request": "kf_pom.kf_pom.custom_script.material_request.material_request.get_permission_query_conditions",
+	"Purchase Order": "kf_pom.kf_pom.custom_script.purchase_order.purchase_order.get_permission_query_conditions"
 }
 #
 # has_permission = {
