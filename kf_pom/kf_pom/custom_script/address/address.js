@@ -1,5 +1,8 @@
 frappe.ui.form.on("Address",{ 
 	onload:function(frm) {
+		cur_frm.fields_dict.commercial_approver.get_query = function (doc, cdt, cdn) {
+				return { query: "kf_pom.kf_pom.custom_script.address.address.user_query"
+		}}
 		if(!frm.is_new()) {
 			//make commercial approver madatory for customer address
 			if(frm.doc.links[0].link_doctype == 'Customer') {
