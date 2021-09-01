@@ -4,7 +4,7 @@
   "doctype": "Workflow",
   "document_type": "Material Request",
   "is_active": 1,
-  "modified": "2021-08-24 17:05:13.049048",
+  "modified": "2021-08-31 13:42:31.121740",
   "name": "Material Request",
   "override_status": 0,
   "parent": null,
@@ -65,7 +65,7 @@
     "update_value": "Procurement Approver Approved"
    },
    {
-    "allow_edit": "Commercial Approver",
+    "allow_edit": "Requestor/Site Manager",
     "doc_status": "0",
     "is_optional_state": 0,
     "message": null,
@@ -161,20 +161,9 @@
    {
     "action": "Submit",
     "allow_self_approval": 1,
-    "allowed": "Commercial Approver",
+    "allowed": "Requestor/Site Manager",
     "condition": null,
-    "next_state": "Commercial Approver Approved",
-    "parent": "Material Request",
-    "parentfield": "transitions",
-    "parenttype": "Workflow",
-    "state": "Rejected by Procurement Approver"
-   },
-   {
-    "action": "Reject",
-    "allow_self_approval": 1,
-    "allowed": "Commercial Approver",
-    "condition": null,
-    "next_state": "Rejected by Commercial Approver",
+    "next_state": "Submitted by Requestor",
     "parent": "Material Request",
     "parentfield": "transitions",
     "parenttype": "Workflow",
