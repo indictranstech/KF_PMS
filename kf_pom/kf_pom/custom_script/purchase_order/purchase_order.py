@@ -35,7 +35,7 @@ def validate(doc,method=None):
 		(Category: %s, Sub category: %s)
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,get_user_fullname(doc.modified_by),pr_no,doc.category,doc.sub_category,url)
-		frappe.sendmail(recipients=r_email,subject=subject,content=msg)
+		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Director Approver Approved':
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
@@ -53,7 +53,7 @@ def validate(doc,method=None):
 		Please login and acknowledge the PO to be able to download PDF copy of the PO.
 		<br> Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(vendor_email),doc.name,pr_no,doc.category,doc.sub_category,url)
-		frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
+		# frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
 
 	if 'Director Approver' in frappe.get_roles() and doc.workflow_state == 'Rejected by Director Approver':
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
@@ -70,7 +70,7 @@ def validate(doc,method=None):
 		msg = """Hello %s, <br> The Purchase Order %s for PR %s (Category: %s, Sub category: %s) has been rejected by %s with the following comments : %s.
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,pr_no,doc.category,doc.sub_category,get_user_fullname(doc.modified_by),comments[0][0],url)
-		frappe.sendmail(recipients=r_email,subject=subject,content=msg)
+		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	if 'Vendor' in frappe.get_roles() and doc.workflow_state == 'Vendor Approved':
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
@@ -81,7 +81,7 @@ def validate(doc,method=None):
 		msg = """Hello %s <br> The PO %s for PR %s (Category: %s, Sub category: %s) has been acknowledged by the supplier %s.
 		<br>Link: %s<br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,pr_no,doc.category,doc.sub_category,get_user_fullname(doc.modified_by),url)
-		frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
+		# frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)	
 
 	if 'Vendor' in frappe.get_roles() and doc.workflow_state == 'Rejected by Vendor':
 		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
@@ -92,7 +92,7 @@ def validate(doc,method=None):
 		msg = """Hello %s <br> PO %s for PR %s has been rejected by %s 
 		<br>Link: %s<br><br>Thanks,<br>Knight Frank Procurement Team
 				"""%(get_user_fullname(r_email),doc.name,pr_no,get_user_fullname(doc.modified_by),url)
-		frappe.sendmail(recipients=r_email,subject=subject,content=msg)
+		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	
 def get_permission_query_conditions(doctype):
