@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "creation": "2021-09-02 14:51:42.890931",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "email_configuration",
+  "procurement_approver",
+  "director_approver"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "email_configuration",
+   "fieldtype": "Check",
+   "label": "Email configuration "
+  },
+  {
+   "fieldname": "procurement_approver",
+   "fieldtype": "Link",
+   "label": "Procurement Approver",
+   "options": "User"
+  },
+  {
+   "fieldname": "director_approver",
+   "fieldtype": "Link",
+   "label": "Director Approver",
+   "options": "User"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-09-08 16:26:50.316701",
+ "modified_by": "Administrator",
+ "module": "KF_POM",
+ "name": "KF Email Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
