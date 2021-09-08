@@ -21,11 +21,37 @@ frappe.ui.form.on("Material Request",{
         if(frm.is_new()){
             frm.set_value("tc_name",'Standard Template')
             frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","Sarvesh.Tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","9999911111")
-
+            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
+            frm.set_value("kf_contact_no","8291900219")
         }
 	},
+    kf_contact_email: function(frm) {
+        if(frm.doc.kf_contact_email) {
+            frappe.call({
+                method: 'frappe.client.get_value',
+                args: {
+                    'doctype': 'User',
+                    'filters': {'name': frm.doc.kf_contact_email},
+                    'fieldname': [
+                        'mobile_no',
+                        'full_name'
+                    ]
+                },
+                callback: function(r) {
+                    if (!r.exc) {
+                        // code snippet
+                        if(r.message){
+                            frm.set_value("kf_contact_name",r.message.full_name)
+                            frm.set_value("kf_contact_no",r.message.mobile_no)
+                        }
+                    }
+                }
+            });
+        } else {
+            frm.set_value("kf_contact_name","")
+            frm.set_value("kf_contact_no","")
+        }
+    },
 	onload:function(frm) {
         if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
@@ -35,9 +61,8 @@ frappe.ui.form.on("Material Request",{
         if(frm.is_new()){
             frm.set_value("tc_name",'Standard Template')
             frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","Sarvesh.Tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","9999911111")
-
+            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
+            frm.set_value("kf_contact_no","8291900219")
         }
         frm.set_query('kf_customer_shipping_address', function(doc) {
             if(!doc.kf_customer) {
