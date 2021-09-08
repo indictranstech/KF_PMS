@@ -33,6 +33,7 @@ def validate(doc,method=None):
 
 	# send the emails on creation,approval and rejection
 	if 'Requestor/Site Manager' in frappe.get_roles() and doc.workflow_state == 'Submitted by Requestor':
+		s_email = frappe.db.get_singles_dict("KF Email Settings")
 		r_email = doc.commercial_approver
 		cc_email = doc.requestor_email
 		url = base_url_dev + "/material-request/" + doc.name
@@ -40,19 +41,23 @@ def validate(doc,method=None):
 		msg = """Hello %s, <br> The Purchase Requisition %s (Category: %s, Sub category: %s) for %s has been submitted for your approval by %s
 		<br> Link : %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,doc.category,doc.sub_category,doc.kf_customer,doc.requestor_name,url)
-		# frappe.sendmail(recipients=r_email,cc=cc_email,subject= subject,content=msg)
+		if s_email["email_configuration"] == "1":
+			frappe.sendmail(recipients=r_email,cc=cc_email,subject= subject,content=msg)
 
 	if 'Commercial Approver' in frappe.get_roles() and doc.workflow_state == 'Commercial Approver Approved':
-		r_email = frappe.db.get_value('Has Role',{'role': 'Procurement  Approver'},['parent'])
 		cc_email = doc.requestor_email 
+		s_email = frappe.db.get_singles_dict("KF Email Settings")
+		r_email = s_email["procurement_approver"]
 		url = base_url_dev + "/material-request/" + doc.name
 		subject = """Purchase Requisition %s for %s has been submitted for your Approval by %s"""%(doc.name,doc.kf_customer,get_user_fullname(doc.modified_by))
 		msg = """Hello %s, <br> The Purchase Requisition %s (Category: %s, Sub category: %s) for %s has been submitted for your approval by %s.
 		<br> Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,doc.category,doc.sub_category,doc.kf_customer,get_user_fullname(doc.modified_by),url)
-		# frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)
+		if s_email["email_configuration"] == "1":
+			frappe.sendmail(recipients=r_email,cc=cc_email,subject=subject,content=msg)
 
 	if 'Commercial Approver' in frappe.get_roles() and doc.workflow_state == 'Rejected by Commercial Approver':
+		s_email = frappe.db.get_singles_dict("KF Email Settings")
 		r_email = doc.requestor_email
 		url = base_url_dev + "/material-request/" + doc.name
 		comments = frappe.db.sql(''' 
@@ -65,18 +70,22 @@ def validate(doc,method=None):
 		msg = """Hello %s, <br> The Purchase Requisition %s (Category: %s, Sub category: %s) for %s has been rejected by %s with the following Comments: %s
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,doc.category,doc.sub_category,doc.kf_customer,get_user_fullname(doc.modified_by),comments[0][0],url)
-		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)	
+		if s_email["email_configuration"] == "1":
+			frappe.sendmail(recipients=r_email,subject=subject,content=msg)	
 
 	if 'Procurement  Approver' in frappe.get_roles() and doc.workflow_state == 'Procurement Approver Approved':
+		s_email = frappe.db.get_singles_dict("KF Email Settings")
 		r_email = doc.requestor_email
 		url = base_url_dev + "/material-request/" + doc.name
 		subject="""Purchase Requisition %s for %s has been submitted for your Approval by %s"""%(doc.name,doc.kf_customer,get_user_fullname(doc.modified_by))
 		msg = """Hello %s, <br> The Purchase Requisition %s (Category: %s, Sub category: %s) for %s has been Approved by %s
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,doc.category,doc.sub_category,doc.kf_customer,get_user_fullname(doc.modified_by),url)
-		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)	
+		if s_email["email_configuration"] == "1":
+			frappe.sendmail(recipients=r_email,subject=subject,content=msg)	
 
 	if 'Procurement  Approver' in frappe.get_roles() and doc.workflow_state == 'Rejected by Procurement Approver':
+		s_email = frappe.db.get_singles_dict("KF Email Settings")
 		r_email = doc.requestor_email
 		url = base_url_dev + "/material-request/" + doc.name
 		comments = frappe.db.sql(''' 
@@ -89,7 +98,8 @@ def validate(doc,method=None):
 		msg = """Hello %s, <br> The Purchase Requisition %s (Category: %s, Sub category: %s) for %s has been rejected by %s with the following Comments : %s.
 		<br>Link: %s <br><br>Thanks,<br>Knight Frank Procurement Team
 		"""%(get_user_fullname(r_email),doc.name,doc.category,doc.sub_category,doc.kf_customer,get_user_fullname(doc.modified_by),comments[0][0],url)
-		# frappe.sendmail(recipients=r_email,subject=subject,content=msg)
+		if s_email["email_configuration"] == "1":
+			frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 def get_permission_query_conditions(doctype):
 	#Commercial Approver can see only the MR for himself
