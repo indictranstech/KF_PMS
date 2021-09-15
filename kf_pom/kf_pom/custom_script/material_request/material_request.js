@@ -166,11 +166,5 @@ frappe.ui.form.on("Material Request",{
     			frappe.throw("From Date Should not Exceed To Date")
     		}
     	}
-        //To calculate and update the Grand total on save
-        var grand_total = 0;
-        for (var i=0; i<frm.doc.items.length;i++) {
-            grand_total = grand_total + frm.doc.items[i].amount;
-        }
-        frm.set_value('grand_total',grand_total)
     }
 });
