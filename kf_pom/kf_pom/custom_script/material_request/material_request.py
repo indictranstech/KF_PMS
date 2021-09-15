@@ -5,6 +5,15 @@ import json
 from frappe.utils.user import get_user_fullname
 
 def validate(doc,method=None):
+	# update amount for all the entries in items table and calculate the grand_total
+	if(len(doc.items)>0):
+		grand_total = 0.00
+		for item in doc.items:
+			amount = float(item.rate)*item.qty
+			item.amount = amount
+			grand_total= grand_total + amount
+		doc.grand_total = grand_total
+
 	if(doc.commercial_approver == None or doc.commercial_approver == ''):
 		frappe.throw("Please get the commercial_approver mapped to the customer before creating the Purchase requisition for this customer")
 
