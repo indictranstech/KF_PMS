@@ -1,5 +1,8 @@
 frappe.ui.form.on("Material Request",{
 	refresh:function(frm){
+        $.each(frm.doc.items, function(i,v) {
+              frappe.model.set_value(v.doctype, v.name, "schedule_date", frm.doc.schedule_date);                           
+        });
 		if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
