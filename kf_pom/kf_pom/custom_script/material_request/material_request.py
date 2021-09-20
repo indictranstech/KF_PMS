@@ -146,3 +146,35 @@ def get_permission_query_conditions(doctype):
 		if not names:
 		#to return nothing
 			return """(`tabMaterial Request`.name is NULL)"""
+
+
+ # To include the addres_line1 in address drop-down on PR
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def address_query(doctype, txt, searchfield, start, page_len, filters):
+	
+	link_doctype = filters.pop('link_doctype')
+	link_name = filters.pop('link_name')
+
+	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city,`tabAddress`.country 
+					from 
+						`tabAddress`,`tabDynamic Link` 
+					where
+						`tabDynamic Link`.parent = `tabAddress`.name and
+						`tabDynamic Link`.parenttype = 'Address' and
+						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
+						`tabDynamic Link`.link_name = %(link_name)s and
+						ifnull(`tabAddress`.disabled, 0) = 0 
+						order by
+						if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
+						`tabAddress`.idx desc, `tabAddress`.address_line1
+						limit %(start)s, %(page_len)s""".format(
+							key=searchfield,
+							), {
+							'txt': '%' + txt + '%',
+							'_txt': txt.replace("%", ""),
+							'start': start,
+							'page_len': page_len,
+							'link_name': link_name,
+							'link_doctype': link_doctype
+						})
