@@ -10,9 +10,11 @@ frappe.ui.form.on("Address",{
 				return { query: "kf_pom.kf_pom.custom_script.address.address.user_query" }
 				}
 				frm.set_df_property('commercial_approver','reqd',1)
+				frm.set_df_property('sub_location','reqd',1)
 			} else {
 				frm.set_value('commercial_approver','')
 				frm.set_df_property('commercial_approver','reqd',0)
+				frm.set_df_property('sub_location','reqd',0)
 
 			}
 			//make email_id mandatory for supplier ie vendor address
@@ -36,10 +38,11 @@ frappe.ui.form.on("Address",{
 		//Make Commercial approver mandatory only on Customer Address
 		if(frm.doc.links[0].link_doctype == 'Customer') {
 			frm.set_df_property('commercial_approver','reqd',1)
+			frm.set_df_property('sub_location','reqd',1)
 		} else {
 			frm.set_value('commercial_approver','')
 			frm.set_df_property('commercial_approver','reqd',0)
-
+			frm.set_df_property('sub_location','reqd',0)
 		}
 		//Make email_id mandatory for Supplier ie Vendor address
 		if(frm.doc.links[0].link_doctype == 'Supplier') {
