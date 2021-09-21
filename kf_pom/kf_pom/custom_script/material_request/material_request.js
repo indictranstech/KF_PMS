@@ -73,7 +73,8 @@ frappe.ui.form.on("Material Request",{
             }
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Customer',
                     link_name: doc.kf_customer
@@ -85,7 +86,8 @@ frappe.ui.form.on("Material Request",{
         frm.set_query('billing_address', function(doc) {
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Company',
                     link_name: doc.company
@@ -110,7 +112,8 @@ frappe.ui.form.on("Material Request",{
             }
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Customer',
                     link_name: doc.kf_customer
