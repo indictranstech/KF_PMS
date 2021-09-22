@@ -83,11 +83,13 @@ frappe.ui.form.on("Purchase Order",{
 	company_billing_add:function(frm) {
 		if(frm.doc.company_billing_add) {
 			frm.set_value('billing_address',frm.doc.company_billing_add)
+			frm.set_value('shipping_address',frm.doc.company_billing_add)
 		}
 	},
 	supplier: function(frm){
 		if(frm.doc.company_billing_add) {
 			frm.set_value('billing_address',frm.doc.company_billing_add)
+			frm.set_value('shipping_address',frm.doc.company_billing_add)
 		}
 	},
 	validate:function(frm){
