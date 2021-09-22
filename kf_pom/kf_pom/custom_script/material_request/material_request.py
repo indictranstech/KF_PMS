@@ -152,11 +152,12 @@ def get_permission_query_conditions(doctype):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def address_query(doctype, txt, searchfield, start, page_len, filters):
-	
+	from frappe.desk.reportview import get_match_cond
+
 	link_doctype = filters.pop('link_doctype')
 	link_name = filters.pop('link_name')
 
-	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city,`tabAddress`.country 
+	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city
 					from 
 						`tabAddress`,`tabDynamic Link` 
 					where
@@ -164,12 +165,14 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 						`tabDynamic Link`.parenttype = 'Address' and
 						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
 						`tabDynamic Link`.link_name = %(link_name)s and
-						ifnull(`tabAddress`.disabled, 0) = 0 
+						ifnull(`tabAddress`.disabled, 0) = 0
+						{mcond}
 						order by
 						if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
 						`tabAddress`.idx desc, `tabAddress`.address_line1
 						limit %(start)s, %(page_len)s""".format(
-							key=searchfield,
+							mcond=get_match_cond(doctype),
+							key=searchfield
 							), {
 							'txt': '%' + txt + '%',
 							'_txt': txt.replace("%", ""),
