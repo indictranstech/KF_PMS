@@ -127,9 +127,9 @@ def get_permission_query_conditions(doctype):
 
 
 	if "Vendor" in frappe.get_roles():
-		
+		corresponding_address = frappe.get_value("Address",{"email_id":frappe.session.user},"name")
 		names = frappe.db.sql("""select name from `tabPurchase Order` 
-								where workflow_state in ('Director Approver Approved','Vendor Approved','Rejected by Vendor')""")
+								where workflow_state in ('Director Approver Approved','Vendor Approved','Rejected by Vendor') and supplier_address = '{0}' """.format(corresponding_address))
 
 		if names:
 			names = ",".join("'" + i[0]+"'" for i in names)
