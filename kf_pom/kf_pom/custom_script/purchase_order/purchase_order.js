@@ -13,13 +13,13 @@ frappe.ui.form.on("Purchase Order",{
 			//hide print option 
 			$('.text-muted.btn.btn-default.icon-btn[data-original-title="Print"]').hide()
 		}
-		if(frappe.user.has_role('Vendor')){
-			//hide comments
-			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
-			frm.set_df_property("approver_comments","hidden",1)
-		}
+		// if(frappe.user.has_role('Vendor')){
+		// 	//hide comments
+		// 	$('.timeline-items').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
+		// 	frm.set_df_property("approver_comments","hidden",1)
+		// }
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
 			frm.set_value("kf_contact_name","Sarvesh Tiwari")
@@ -45,13 +45,13 @@ frappe.ui.form.on("Purchase Order",{
 			//hide print option 
 			$('.text-muted.btn.btn-default.icon-btn[data-original-title="Print"]').hide()
 		}
-		if(frappe.user.has_role('Vendor')){
-			//hide comments
-			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
-			frm.set_df_property("approver_comments","hidden",1)
-		}
+		// if(frappe.user.has_role('Vendor')){
+		// 	//hide comments
+		// 	$('.timeline-items').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
+		// 	frm.set_df_property("approver_comments","hidden",1)
+		// }
 	},
 	kf_contact_email: function(frm) {
         if(frm.doc.kf_contact_email) {
