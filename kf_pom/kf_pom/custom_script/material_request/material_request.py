@@ -181,3 +181,17 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 							'link_name': link_name,
 							'link_doctype': link_doctype
 						})
+
+
+@frappe.whitelist()
+def check_po(mi):
+	return frappe.db.sql("""
+		select 
+			ifnull(SUM(po.total_qty),0) as tot_qty
+		from 
+			`tabPurchase Order` po, `tabPurchase Order Item` poi
+		where
+			po.name = poi.parent and po.docstatus = 0 and 
+			poi.material_request = '{0}'""".format(mi),as_dict=1,debug=0)
+	
+
