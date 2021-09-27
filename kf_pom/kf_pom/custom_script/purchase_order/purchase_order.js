@@ -16,8 +16,8 @@ frappe.ui.form.on("Purchase Order",{
 		if(frappe.user.has_role('Vendor')){
 			//hide comments
 			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
 			frm.set_df_property("approver_comments","hidden",1)
 		}
 		if(frm.is_new()){
@@ -48,8 +48,8 @@ frappe.ui.form.on("Purchase Order",{
 		if(frappe.user.has_role('Vendor')){
 			//hide comments
 			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
 			frm.set_df_property("approver_comments","hidden",1)
 		}
 	},
