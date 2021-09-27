@@ -2,6 +2,7 @@ frappe.ui.form.on("Material Request",{
 	refresh:function(frm){
         $.each(frm.doc.items, function(i,v) {
               frappe.model.set_value(v.doctype, v.name, "schedule_date", frm.doc.schedule_date);                           
+              frappe.item_quantity += v.qty
         });
 		if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
@@ -56,6 +57,25 @@ frappe.ui.form.on("Material Request",{
         }
     },
 	onload:function(frm) {
+        var item_quantity = 0
+        $.each(frm.doc.items, function(i,v) {                       
+              item_quantity += v.qty
+        });
+        frappe.call({
+            method: 'kf_pom.kf_pom.custom_script.material_request.material_request.check_po',
+            args: {
+                'mi': frm.doc.name
+            },
+            callback: function(r) {
+                if(r.message)
+                {
+                    if(r.message[0].tot_qty == item_quantity)
+                    {
+                        frm.remove_custom_button(__("Create"))
+                    }
+                }
+            }
+        });
         if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
