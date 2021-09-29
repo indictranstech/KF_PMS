@@ -29,6 +29,20 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_no","8291900219")
         }
 	},
+    category: function(frm) {
+        if(frm.doc.category){
+            frm.set_value('sub_category','')
+            cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
+                return {
+                    filters: [
+                                ['Sub Category','category', '=', frm.doc.category]
+                            ]
+                }
+            } 
+        } else {
+            frm.set_value('sub_category','')
+        }
+    },
     kf_contact_email: function(frm) {
         if(frm.doc.kf_contact_email) {
             frappe.call({
