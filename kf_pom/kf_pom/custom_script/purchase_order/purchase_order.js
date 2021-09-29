@@ -34,7 +34,7 @@ frappe.ui.form.on("Purchase Order",{
 	},
 	onload:function(frm){
 		frappe.flag_for_category = 1
-    	frm.set_value('kf_purchase_requisition',frm.doc.items[0].material_request)
+    	// frm.set_value('kf_purchase_requisition',frm.doc.items[0].material_request)
 
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
@@ -89,10 +89,6 @@ frappe.ui.form.on("Purchase Order",{
 	        }
     	}
     },
-    // sub_category: function(frm) {
-
-    // 	console.log('sub_category###===',frm.doc.sub_category)
-    // },
 	kf_contact_email: function(frm) {
         if(frm.doc.kf_contact_email) {
             frappe.call({
