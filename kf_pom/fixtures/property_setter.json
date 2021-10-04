@@ -2412,5 +2412,22 @@
   "property_type": "Check",
   "row_name": null,
   "value": "0"
+ },
+ {
+  "default_value": null,
+  "doc_type": "User Permission",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "allow",
+  "modified": "2021-10-04 19:13:04.573559",
+  "name": "User Permission-allow-description",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "description",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "<p style=\"color: red;\">if 'Allow= Address', then do following \"Advance Control\" setting.\nUncheck/Off  'Apply To All Document Types' and select 'Applicable For'='Material Request'(i.e Purchase Requisition)</p>"
  }
 ]
