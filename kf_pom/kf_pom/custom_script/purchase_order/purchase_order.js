@@ -1,4 +1,8 @@
 frappe.ui.form.on("Purchase Order",{
+	setup: function(frm) {
+		console.log('In setup')
+		frappe.flag_for_category = 0
+	},
 	refresh:function(frm){
 		cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
 		    return {
@@ -16,8 +20,8 @@ frappe.ui.form.on("Purchase Order",{
 		if(frappe.user.has_role('Vendor')){
 			//hide comments
 			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
 			frm.set_df_property("approver_comments","hidden",1)
 		}
 		if(frm.is_new()){
@@ -29,6 +33,9 @@ frappe.ui.form.on("Purchase Order",{
 		}
 	},
 	onload:function(frm){
+		frappe.flag_for_category = 1
+    	// frm.set_value('kf_purchase_requisition',frm.doc.items[0].material_request)
+
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
 			frm.set_value("kf_contact_name","Sarvesh Tiwari")
@@ -48,11 +55,40 @@ frappe.ui.form.on("Purchase Order",{
 		if(frappe.user.has_role('Vendor')){
 			//hide comments
 			$('.timeline-items').hide();
-			//hide comment box
-			$('.comment-box').hide();
+		// 	//hide comment box
+		// 	$('.comment-box').hide();
 			frm.set_df_property("approver_comments","hidden",1)
 		}
 	},
+	category: function(frm) {
+		if (frappe.flag_for_category == 1) {
+	        if(frm.doc.category){
+	        	frm.set_value('sub_category','')
+	            cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
+	                return {
+	                    filters: [
+	                                ['Sub Category','category', '=', frm.doc.category]
+	                            ]
+	                }
+	            } 
+	        } else {
+	            frm.set_value('sub_category','')
+	        }
+    	} else {
+    		if(frm.doc.category){
+	        	// frm.set_value('sub_category','')
+	            cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
+	                return {
+	                    filters: [
+	                                ['Sub Category','category', '=', frm.doc.category]
+	                            ]
+	                }
+	            } 
+	        } else {
+	            frm.set_value('sub_category','')
+	        }
+    	}
+    },
 	kf_contact_email: function(frm) {
         if(frm.doc.kf_contact_email) {
             frappe.call({
@@ -83,11 +119,13 @@ frappe.ui.form.on("Purchase Order",{
 	company_billing_add:function(frm) {
 		if(frm.doc.company_billing_add) {
 			frm.set_value('billing_address',frm.doc.company_billing_add)
+			frm.set_value('shipping_address',frm.doc.company_billing_add)
 		}
 	},
 	supplier: function(frm){
 		if(frm.doc.company_billing_add) {
 			frm.set_value('billing_address',frm.doc.company_billing_add)
+			frm.set_value('shipping_address',frm.doc.company_billing_add)
 		}
 	},
 	validate:function(frm){
@@ -98,5 +136,6 @@ frappe.ui.form.on("Purchase Order",{
     			frappe.throw("From Date Should not Exceed To Date")
     		}
     	}
+    	frm.set_value('kf_purchase_requisition',frm.doc.items[0].material_request)
     }
 });

@@ -2,6 +2,7 @@ frappe.ui.form.on("Material Request",{
 	refresh:function(frm){
         $.each(frm.doc.items, function(i,v) {
               frappe.model.set_value(v.doctype, v.name, "schedule_date", frm.doc.schedule_date);                           
+              frappe.item_quantity += v.qty
         });
 		if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
@@ -28,6 +29,20 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_no","8291900219")
         }
 	},
+    category: function(frm) {
+        if(frm.doc.category){
+            frm.set_value('sub_category','')
+            cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
+                return {
+                    filters: [
+                                ['Sub Category','category', '=', frm.doc.category]
+                            ]
+                }
+            } 
+        } else {
+            frm.set_value('sub_category','')
+        }
+    },
     kf_contact_email: function(frm) {
         if(frm.doc.kf_contact_email) {
             frappe.call({
@@ -56,6 +71,25 @@ frappe.ui.form.on("Material Request",{
         }
     },
 	onload:function(frm) {
+        var item_quantity = 0
+        $.each(frm.doc.items, function(i,v) {                       
+              item_quantity += v.qty
+        });
+        frappe.call({
+            method: 'kf_pom.kf_pom.custom_script.material_request.material_request.check_po',
+            args: {
+                'mi': frm.doc.name
+            },
+            callback: function(r) {
+                if(r.message)
+                {
+                    if(r.message[0].tot_qty == item_quantity)
+                    {
+                        frm.remove_custom_button(__("Create"))
+                    }
+                }
+            }
+        });
         if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
@@ -73,7 +107,8 @@ frappe.ui.form.on("Material Request",{
             }
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Customer',
                     link_name: doc.kf_customer
@@ -85,7 +120,8 @@ frappe.ui.form.on("Material Request",{
         frm.set_query('billing_address', function(doc) {
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Company',
                     link_name: doc.company
@@ -110,7 +146,8 @@ frappe.ui.form.on("Material Request",{
             }
 
             return {
-                query: 'frappe.contacts.doctype.address.address.address_query',
+                // query: 'frappe.contacts.doctype.address.address.address_query',
+                query: 'kf_pom.kf_pom.custom_script.material_request.material_request.address_query',
                 filters: {
                     link_doctype: 'Customer',
                     link_name: doc.kf_customer
@@ -166,11 +203,5 @@ frappe.ui.form.on("Material Request",{
     			frappe.throw("From Date Should not Exceed To Date")
     		}
     	}
-        //To calculate and update the Grand total on save
-        var grand_total = 0;
-        for (var i=0; i<frm.doc.items.length;i++) {
-            grand_total = grand_total + frm.doc.items[i].amount;
-        }
-        frm.set_value('grand_total',grand_total)
     }
 });

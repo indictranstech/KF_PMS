@@ -5,6 +5,15 @@ import json
 from frappe.utils.user import get_user_fullname
 
 def validate(doc,method=None):
+	# update amount for all the entries in items table and calculate the grand_total
+	if(len(doc.items)>0):
+		grand_total = 0.00
+		for item in doc.items:
+			amount = float(item.rate)*item.qty
+			item.amount = amount
+			grand_total= grand_total + amount
+		doc.grand_total = grand_total
+
 	if(doc.commercial_approver == None or doc.commercial_approver == ''):
 		frappe.throw("Please get the commercial_approver mapped to the customer before creating the Purchase requisition for this customer")
 
@@ -137,3 +146,52 @@ def get_permission_query_conditions(doctype):
 		if not names:
 		#to return nothing
 			return """(`tabMaterial Request`.name is NULL)"""
+
+
+ # To include the addres_line1 in address drop-down on PR
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def address_query(doctype, txt, searchfield, start, page_len, filters):
+	from frappe.desk.reportview import get_match_cond
+
+	link_doctype = filters.pop('link_doctype')
+	link_name = filters.pop('link_name')
+
+	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city
+					from 
+						`tabAddress`,`tabDynamic Link` 
+					where
+						`tabDynamic Link`.parent = `tabAddress`.name and
+						`tabDynamic Link`.parenttype = 'Address' and
+						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
+						`tabDynamic Link`.link_name = %(link_name)s and
+						ifnull(`tabAddress`.disabled, 0) = 0
+						{mcond}
+						order by
+						if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
+						`tabAddress`.idx desc, `tabAddress`.address_line1
+						limit %(start)s, %(page_len)s""".format(
+							mcond=get_match_cond(doctype),
+							key=searchfield
+							), {
+							'txt': '%' + txt + '%',
+							'_txt': txt.replace("%", ""),
+							'start': start,
+							'page_len': page_len,
+							'link_name': link_name,
+							'link_doctype': link_doctype
+						})
+
+
+@frappe.whitelist()
+def check_po(mi):
+	return frappe.db.sql("""
+		select 
+			ifnull(SUM(po.total_qty),0) as tot_qty
+		from 
+			`tabPurchase Order` po, `tabPurchase Order Item` poi
+		where
+			po.name = poi.parent and po.docstatus = 0 and 
+			poi.material_request = '{0}'""".format(mi),as_dict=1,debug=0)
+	
+
