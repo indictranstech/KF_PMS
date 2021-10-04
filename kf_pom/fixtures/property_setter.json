@@ -2344,5 +2344,39 @@
   "property_type": "Data",
   "row_name": null,
   "value": "address_line1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Item",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "modified": "2021-09-29 20:28:00.297245",
+  "name": "Item-main-quick_entry",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "quick_entry",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "0"
+ },
+ {
+  "default_value": null,
+  "doc_type": "User Permission",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "allow",
+  "modified": "2021-10-04 19:13:04.573559",
+  "name": "User Permission-allow-description",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "description",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "<p style=\"color: red;\">if 'Allow= Address', then do following \"Advance Control\" setting.\nUncheck/Off  'Apply To All Document Types' and select 'Applicable For'='Material Request'(i.e Purchase Requisition)</p>"
  }
 ]
