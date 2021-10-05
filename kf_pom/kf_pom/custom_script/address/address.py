@@ -17,6 +17,9 @@ def user_query(doctype,txt,searchfield, start, page_len, filters):
         			'txt': "%{}%".format(txt)})
 
 def get_permission_query_conditions(doctype):
+	if frappe.session.user == "Administrator":
+		return ""
+		
 	if "Requestor/Site Manager" in frappe.get_roles():
 		user = frappe.session.user
 		names = frappe.db.sql("""select name from `tabAddress`  
