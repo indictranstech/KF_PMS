@@ -1,21 +1,21 @@
 frappe.ui.form.on("Material Request",{
-	refresh:function(frm){
+    refresh:function(frm){
         $.each(frm.doc.items, function(i,v) {
               frappe.model.set_value(v.doctype, v.name, "schedule_date", frm.doc.schedule_date);                           
               frappe.item_quantity += v.qty
         });
-		if(frm.is_new()) {
+        if(frm.is_new()) {
             frm.set_value('requestor_email',frappe.session.user_email);
             frm.set_value('requestor_name',frappe.session.user_fullname);
         } 
-		
-		cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
-		    return {
-		        filters: [
-		            		['Sub Category','category', '=', frm.doc.category]
-						]
-			}
-		}
+        
+        cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
+            return {
+                filters: [
+                            ['Sub Category','category', '=', frm.doc.category]
+                        ]
+            }
+        }
         if(frappe.user.has_role('Requestor/Site Manager')) {
             frm.set_df_property('approver_comments','read_only',1)
         }
@@ -28,7 +28,7 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
             frm.set_value("kf_contact_no","8291900219")
         }
-	},
+    },
     category: function(frm) {
         if(frm.doc.category){
             frm.set_value('sub_category','')
@@ -70,7 +70,7 @@ frappe.ui.form.on("Material Request",{
             frm.set_value("kf_contact_no","")
         }
     },
-	onload:function(frm) {
+    onload:function(frm) {
         var item_quantity = 0
         $.each(frm.doc.items, function(i,v) {                       
               item_quantity += v.qty
@@ -179,13 +179,6 @@ frappe.ui.form.on("Material Request",{
                         frm.set_value('kf_sub_location',r.message[0].sub_location)
                         frm.set_value('commercial_approver',r.message[0].commercial_approver)
                     }
-
-            //to fetch the sub location from customer address on PO
-            frappe.db.get_value('Address',frm.doc.kf_customer_shipping_address,['sub_location','commercial_approver'])
-            .then(r =>{
-                if(r.message){
-                    frm.set_value('kf_sub_location',r.message.sub_location)
-                    frm.set_value('commercial_approver',r.message.commercial_approver)
                 }
             })
         } else {
@@ -209,10 +202,10 @@ frappe.ui.form.on("Material Request",{
     validate:function(frm){
         var from_date=new Date(frm.doc.po_validity_from_date);
         var to_date=new Date(frm.doc.po_validity_to_date);
-    	if (from_date && to_date){
-    		if (from_date>to_date){
-    			frappe.throw("From Date Should not Exceed To Date")
-    		}
-    	}
+        if (from_date && to_date){
+            if (from_date>to_date){
+                frappe.throw("From Date Should not Exceed To Date")
+            }
+        }
     }
 });

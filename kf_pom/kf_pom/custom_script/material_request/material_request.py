@@ -6,6 +6,7 @@ from frappe.utils.user import get_user_fullname
 from frappe.desk.search import sanitize_searchfield
 from frappe.model.db_query import DatabaseQuery
 
+
 def validate(doc,method=None):
 	# update amount for all the entries in items table and calculate the grand_total
 	if(len(doc.items)>0):
@@ -163,7 +164,6 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 	name = tuple(_add[1][1:-2].replace("'", "").split(","))
 	name_of_add = """and REPLACE(`tabAddress`.name,"'", "") in """+str(name)
 
-
 	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city
 					from 
 						`tabAddress`,`tabDynamic Link` 
@@ -172,7 +172,6 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 						`tabDynamic Link`.parenttype = 'Address' and
 						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
 						REPLACE(`tabDynamic Link`.link_name, "'", "") = %(link_name)s and
-						`tabDynamic Link`.link_name = %(link_name)s and
 						ifnull(`tabAddress`.disabled, 0) = 0
 						{mcond}
 						order by
@@ -180,7 +179,6 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 						`tabAddress`.idx desc, `tabAddress`.address_line1
 						limit %(start)s, %(page_len)s""".format(
 							mcond=name_of_add,
-							mcond=get_match_cond(doctype),
 							key=searchfield
 							), {
 							'txt': '%' + txt + '%',
@@ -188,9 +186,11 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 							'start': start,
 							'page_len': page_len,
 							'link_name': link_name.replace("'", ""),
-							'link_name': link_name,
 							'link_doctype': link_doctype
 						})
+
+
+
 
 @frappe.whitelist()
 def check_po(mi):
@@ -207,4 +207,5 @@ def check_po(mi):
 @frappe.whitelist()
 def get_address_details(name):
 	return frappe.db.get_values("Address", name, ['sub_location','commercial_approver'], as_dict=1)
+
 
