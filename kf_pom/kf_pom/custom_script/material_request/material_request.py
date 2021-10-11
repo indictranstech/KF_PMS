@@ -3,12 +3,8 @@ from frappe.model.document import Document
 import frappe
 import json
 from frappe.utils.user import get_user_fullname
-<<<<<<< HEAD
 from frappe.desk.search import sanitize_searchfield
 from frappe.model.db_query import DatabaseQuery
-
-=======
->>>>>>> 1b7888126e097bf8b4a59df03549f260c2454012
 
 def validate(doc,method=None):
 	# update amount for all the entries in items table and calculate the grand_total
