@@ -18,8 +18,15 @@ def validate(doc,method=None):
 			doc.add_comment('Comment', text=doc.approver_comments)
 			doc.approver_comments = ''
 
-	if((doc.workflow_state == 'Vendor Approved' or doc.workflow_state == 'Rejected by Vendor')and 'Vendor' in frappe.get_roles()):
+	if((doc.workflow_state == 'Vendor Approved')and 'Vendor' in frappe.get_roles()):
 		if doc.approver_comments:
+			doc.add_comment('Comment', text=doc.approver_comments)
+			doc.approver_comments = ''
+
+	if((doc.workflow_state == 'Rejected by Vendor')and 'Vendor' in frappe.get_roles()):
+		if doc.	approver_comments == None or doc.approver_comments == '':
+			frappe.throw("Approver's comments are mandatory")
+		else:
 			doc.add_comment('Comment', text=doc.approver_comments)
 			doc.approver_comments = ''
 
@@ -93,13 +100,19 @@ def validate(doc,method=None):
 	if 'Vendor' in frappe.get_roles() and doc.workflow_state == 'Rejected by Vendor':
 		s_email = frappe.db.get_singles_dict("KF Email Settings")
 		r_email = s_email["procurement_approver"]
+		comments = frappe.db.sql(''' 
+			Select content from `tabComment` where reference_doctype='Purchase Order' 
+			and reference_name=%s 
+			and comment_type='comment'
+			and owner = %s
+			''',(doc.name,doc.modified_by),as_list=1)
 		pr_no = doc.items[0].material_request
 		url = base_url_dev + "/purchase-order/" + doc.name
-		subject = """PO %s for PR %s (Category: %s, Sub category: %s) has been Rejected by %s 
-		"""%(doc.name,pr_no,doc.category,doc.sub_category,get_user_fullname(doc.modified_by))
-		msg = """Hello %s <br> PO %s for PR %s has been rejected by %s 
+		subject = """PO %s for PR %s (Category: %s, Sub category: %s) has been Rejected by %s
+		"""%(doc.name,pr_no,doc.category,doc.sub_category,get_user_fullname(doc.modified_by),)
+		msg = """Hello %s <br> PO %s for PR %s has been rejected by %s with the following comments: %s.
 		<br>Link: %s<br><br>Thanks,<br>Knight Frank Procurement Team
-				"""%(get_user_fullname(r_email),doc.name,pr_no,get_user_fullname(doc.modified_by),url)
+				"""%(get_user_fullname(r_email),doc.name,pr_no,get_user_fullname(doc.modified_by),comments[0][0],url)
 		if s_email["email_configuration"] == "1":
 			frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
@@ -175,3 +188,38 @@ def get_permission_query_conditions(doctype):
 		if not names:
 		#to return nothing
 			return """(`tabPurchase Order`.name is NULL)"""
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def address_query(doctype, txt, searchfield, start, page_len, filters):
+	from frappe.desk.reportview import get_match_cond
+
+	link_doctype = filters.pop('link_doctype')
+	link_name = filters.pop('link_name')
+	# add_name = get_match_cond(doctype)
+	# _add = add_name.split(" in ")
+	# name = tuple(_add[1][1:-2].replace("'", "").split(","))
+	# name_of_add = """and REPLACE(`tabAddress`.name,"'", "") in """+str(name)
+
+	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city
+					from 
+						`tabAddress`,`tabDynamic Link` 
+					where
+						`tabDynamic Link`.parent = `tabAddress`.name and
+						`tabDynamic Link`.parenttype = 'Address' and
+						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
+						REPLACE(`tabDynamic Link`.link_name, "'", "") = %(link_name)s and
+						ifnull(`tabAddress`.disabled, 0) = 0
+						order by
+						if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
+						`tabAddress`.idx desc, `tabAddress`.address_line1
+						limit %(start)s, %(page_len)s""".format(
+							key=searchfield
+							), {
+							'txt': '%' + txt + '%',
+							'_txt': txt.replace("%", ""),
+							'start': start,
+							'page_len': page_len,
+							'link_name': link_name.replace("'", ""),
+							'link_doctype': link_doctype
+						})

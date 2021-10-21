@@ -4,6 +4,24 @@ frappe.ui.form.on("Purchase Order",{
 		frappe.flag_for_category = 0
 	},
 	refresh:function(frm){
+		if(frappe.user.has_role('Procurement  Approver')) {
+			frm.set_df_property('is_internal_po','hidden',0)
+		} else {
+			frm.set_df_property('is_internal_po','hidden',1)
+		}
+		if(frm.doc.is_internal_po == 1) {
+			frm.set_df_property('billing_address','reqd',1)
+		} else {
+			frm.set_df_property('kf_sub_location','reqd',0)
+		}
+		if(frm.doc.kf_purchase_requisition) {
+			frm.toggle_enable('is_internal_po',0)
+		} else {
+			frm.toggle_enable('is_internal_po',1)
+		}
+		frm.toggle_enable('kf_customer',frm.doc.is_internal_po == 1)
+		frm.toggle_enable('kf_customer_shipping_address',frm.doc.is_internal_po == 1)
+		frm.toggle_enable('billing_address',frm.doc.is_internal_po == 1)
 		cur_frm.fields_dict['sub_category'].get_query = function(doc, cdt, cdn) {
 		    return {
 		        filters: [
@@ -22,7 +40,7 @@ frappe.ui.form.on("Purchase Order",{
 			$('.timeline-items').hide();
 		// 	//hide comment box
 		// 	$('.comment-box').hide();
-			frm.set_df_property("approver_comments","hidden",1)
+			// frm.set_df_property("approver_comments","hidden",1)
 		}
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
@@ -32,7 +50,86 @@ frappe.ui.form.on("Purchase Order",{
 
 		}
 	},
+	is_internal_po: function(frm) {
+		if(frm.doc.is_internal_po == 1) {
+			if(frm.doc.__islocal){
+				frm.set_value('schedule_date',frappe.datetime.add_days(frappe.datetime.get_today(), 3))
+				if(frm.doc.is_internal_po == 1) {
+					frm.set_df_property('billing_address','reqd',1)
+				} else {
+					frm.set_df_property('billing_address','reqd',0)
+				}
+			}
+			frm.toggle_enable('kf_customer',1)
+			frm.toggle_enable('kf_customer_shipping_address',1)
+			frm.toggle_enable('billing_address',1)
+			frm.set_value('kf_customer_shipping_address','')
+			frm.set_value('billing_address','')
+			frm.set_query("kf_customer", function(){
+		        return {
+		            "filters": [
+		                ["Customer", "is_internal_customer", "=", 1]
+		            ]
+		        }
+		    });
+
+		    frm.set_query('kf_customer_shipping_address', function(doc) {
+	            if(!doc.kf_customer) {
+	                frappe.throw(_('Please select Customer'));
+	            }
+
+	            return {
+	                // query: 'frappe.contacts.doctype.address.address.address_query',
+	                query: 'kf_pom.kf_pom.custom_script.purchase_order.purchase_order.address_query',
+	                filters: {
+	                    link_doctype: 'Company',
+	                    link_name: doc.company
+	                }
+	            };
+	        });
+		} else {
+			frm.toggle_enable('kf_customer',0)
+			frm.toggle_enable('kf_customer_shipping_address',0)
+			frm.toggle_enable('billing_address',0)
+			frm.set_value('kf_customer_shipping_address','')
+			frm.set_value('kf_customer_shipping_address_display','')
+			frm.set_value('billing_address','')
+			frm.set_value('kf_customer','')
+			}
+	},
+	kf_customer_shipping_address: function(frm) {
+		if(frm.doc.is_internal_po == 1) {
+	        //to fetch customer address on PO
+	        if(frm.doc.kf_customer_shipping_address) {
+	            frappe.call({
+	                method: "frappe.contacts.doctype.address.address.get_address_display",
+	                args: {"address_dict": frm.doc.kf_customer_shipping_address },
+	                callback: function(r) {
+	                    if(r.message) {
+	                        console.log(r.message)
+	                        frm.set_value("kf_customer_shipping_address_display", r.message)
+	                    }
+	                }
+	            })
+	        }
+	    }
+    },
 	onload:function(frm){
+		if(frappe.user.has_role('Procurement  Approver')) {
+			frm.set_df_property('is_internal_po','hidden',0)
+		} else {
+			frm.set_df_property('is_internal_po','hidden',1)
+		}
+		if(frm.doc.kf_purchase_requisition) {
+			frm.toggle_enable('is_internal_po',0)
+		} else {
+			frm.toggle_enable('is_internal_po',1)
+		}
+		if(frm.doc.is_internal_po == 1) {
+			frm.set_df_property('billing_address','reqd',1)
+		} else {
+			frm.set_df_property('kf_sub_location','reqd',0)
+		}
 		frappe.flag_for_category = 1
     	// frm.set_value('kf_purchase_requisition',frm.doc.items[0].material_request)
 
@@ -57,7 +154,7 @@ frappe.ui.form.on("Purchase Order",{
 			$('.timeline-items').hide();
 		// 	//hide comment box
 		// 	$('.comment-box').hide();
-			frm.set_df_property("approver_comments","hidden",1)
+			// frm.set_df_property("approver_comments","hidden",1)
 		}
 	},
 	category: function(frm) {
