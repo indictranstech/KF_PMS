@@ -2429,5 +2429,22 @@
   "property_type": "Text",
   "row_name": null,
   "value": "<p style=\"color: red;\">if 'Allow= Address', then do following \"Advance Control\" setting.\nUncheck/Off  'Apply To All Document Types' and select 'Applicable For'='Material Request'(i.e Purchase Requisition)</p>"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Purchase Order",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "payment_terms_template",
+  "modified": "2021-11-16 19:10:37.760116",
+  "name": "Purchase Order-payment_terms_template-reqd",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "reqd",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "1"
  }
 ]
