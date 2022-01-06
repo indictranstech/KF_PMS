@@ -209,3 +209,4 @@ def get_address_details(name):
 	return frappe.db.get_values("Address", name, ['sub_location','commercial_approver'], as_dict=1)
 
 
+
