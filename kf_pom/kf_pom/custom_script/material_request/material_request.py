@@ -3,6 +3,9 @@ from frappe.model.document import Document
 import frappe
 import json
 from frappe.utils.user import get_user_fullname
+from frappe.desk.search import sanitize_searchfield
+from frappe.model.db_query import DatabaseQuery
+
 
 def validate(doc,method=None):
 	# update amount for all the entries in items table and calculate the grand_total
@@ -156,6 +159,10 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 
 	link_doctype = filters.pop('link_doctype')
 	link_name = filters.pop('link_name')
+	add_name = get_match_cond(doctype)
+	_add = add_name.split(" in ")
+	name = tuple(_add[1][1:-2].replace("'", "").split(","))
+	name_of_add = """and REPLACE(`tabAddress`.name,"'", "") in """+str(name)
 
 	return frappe.db.sql("""select `tabAddress`.name, `tabAddress`.address_line1,`tabAddress`.city
 					from 
@@ -164,23 +171,25 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 						`tabDynamic Link`.parent = `tabAddress`.name and
 						`tabDynamic Link`.parenttype = 'Address' and
 						`tabDynamic Link`.link_doctype = %(link_doctype)s and 
-						`tabDynamic Link`.link_name = %(link_name)s and
+						REPLACE(`tabDynamic Link`.link_name, "'", "") = %(link_name)s and
 						ifnull(`tabAddress`.disabled, 0) = 0
 						{mcond}
 						order by
 						if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
 						`tabAddress`.idx desc, `tabAddress`.address_line1
 						limit %(start)s, %(page_len)s""".format(
-							mcond=get_match_cond(doctype),
+							mcond=name_of_add,
 							key=searchfield
 							), {
 							'txt': '%' + txt + '%',
 							'_txt': txt.replace("%", ""),
 							'start': start,
 							'page_len': page_len,
-							'link_name': link_name,
+							'link_name': link_name.replace("'", ""),
 							'link_doctype': link_doctype
 						})
+
+
 
 
 @frappe.whitelist()
@@ -194,4 +203,9 @@ def check_po(mi):
 			po.name = poi.parent and po.docstatus = 0 and 
 			poi.material_request = '{0}'""".format(mi),as_dict=1,debug=0)
 	
+
+@frappe.whitelist()
+def get_address_details(name):
+	return frappe.db.get_values("Address", name, ['sub_location','commercial_approver'], as_dict=1)
+
 
