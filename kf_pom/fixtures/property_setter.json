@@ -2446,5 +2446,22 @@
   "property_type": "Check",
   "row_name": null,
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Material Request",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "schedule_date",
+  "modified": "2022-01-27 18:32:49.436320",
+  "name": "Material Request-schedule_date-allow_on_submit",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "allow_on_submit",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "0"
  }
 ]
