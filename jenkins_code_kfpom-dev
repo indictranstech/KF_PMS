@@ -139,7 +139,7 @@ pipeline {
         
     }
      environment {
-       EMAIL_TO = 'ajay.s@indictranstech.com '
+       EMAIL_TO = 'ajay.s@indictranstech.com, raj.m@indictrans.in '
    }
    post {
      //steps {
