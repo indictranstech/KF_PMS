@@ -4,6 +4,11 @@ frappe.ui.form.on("Purchase Order",{
 		frappe.flag_for_category = 0
 	},
 	refresh:function(frm){
+		// to disable edit for Vendor when PO is Director Approver Approved
+		if(frappe.user.has_role('Vendor') && frm.doc.workflow_state == 'Director Approver Approved') {
+			frm.toggle_enable(['supplier','transaction_date','schedule_date','category','sub_category','contact_display','kf_contact_mobile','contact_email','disable_rounded_total','supplier_address','is_subcontracted','contact_person','currency','conversion_rate','scan_barcode','set_warehouse','tax_category','shipping_rule','taxes_and_charges','taxes','ignore_pricing_rule','payment_terms_template','payment_schedule','tc_name','terms','letter_head','select_print_heading','language','group_same_items','is_internal_supplier','po_validity_from_date','from_date','to_date','po_validity_to_date','items','apply_tds','kf_contact_name','kf_contact_email','kf_contact_no','apply_discount_on','base_discount_amount','additional_discount_percentage','discount_amount'],0)
+			$('.btn-secondary').hide() 
+		}
 		if(frappe.user.has_role('Procurement  Approver')) {
 			frm.set_df_property('is_internal_po','hidden',0)
 		} else {
