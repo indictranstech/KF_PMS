@@ -16,7 +16,6 @@ def user_query(doctype,txt,searchfield, start, page_len, filters):
 					and name like %(txt)s""".format(key=searchfield), {
         			'txt': "%{}%".format(txt)})
 
-
 def get_permission_query_conditions(doctype):
 	if frappe.session.user == "Administrator":
 		return ""
