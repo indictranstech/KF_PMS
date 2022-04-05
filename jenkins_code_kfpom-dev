@@ -1,4 +1,4 @@
-//Designed by Ajay Salunkhe for auto deployment after Pull Request merge on Github 
+//Designed by Raj mishra for auto deployment after Pull Request merge on Github 
 
 def remote = [:]
 remote.name = "indictrans"
