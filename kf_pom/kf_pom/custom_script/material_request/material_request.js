@@ -24,9 +24,16 @@ frappe.ui.form.on("Material Request",{
         }
         if(frm.is_new()){
             frm.set_value("tc_name",'Standard Template')
-            frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","8291900219")
+            frappe.model.get_value('KF Email Settings', {'name': 'KF Email Settings'}, 'x',
+              function(d) {
+                console.log(d)
+                frm.set_value("kf_contact_name",d.contact_name)            
+                frm.set_value("kf_contact_email",d.contact_email)
+                frm.set_value("kf_contact_no",d.contact_number)
+              })
+            // frm.set_value("kf_contact_name","Aniruddh Singh")            
+            // frm.set_value("kf_contact_email","aniruddh.singh@in.knightfrank.com")
+            // frm.set_value("kf_contact_no","9606061085")
         }
     },
     category: function(frm) {
@@ -43,33 +50,33 @@ frappe.ui.form.on("Material Request",{
             frm.set_value('sub_category','')
         }
     },
-    kf_contact_email: function(frm) {
-        if(frm.doc.kf_contact_email) {
-            frappe.call({
-                method: 'frappe.client.get_value',
-                args: {
-                    'doctype': 'User',
-                    'filters': {'name': frm.doc.kf_contact_email},
-                    'fieldname': [
-                        'mobile_no',
-                        'full_name'
-                    ]
-                },
-                callback: function(r) {
-                    if (!r.exc) {
-                        // code snippet
-                        if(r.message){
-                            frm.set_value("kf_contact_name",r.message.full_name)
-                            frm.set_value("kf_contact_no",r.message.mobile_no)
-                        }
-                    }
-                }
-            });
-        } else {
-            frm.set_value("kf_contact_name","")
-            frm.set_value("kf_contact_no","")
-        }
-    },
+    // kf_contact_email: function(frm) {
+    //     if(frm.doc.kf_contact_email) {
+    //         frappe.call({
+    //             method: 'frappe.client.get_value',
+    //             args: {
+    //                 'doctype': 'User',
+    //                 'filters': {'name': frm.doc.kf_contact_email},
+    //                 'fieldname': [
+    //                     'mobile_no',
+    //                     'full_name'
+    //                 ]
+    //             },
+    //             callback: function(r) {
+    //                 if (!r.exc) {
+    //                     // code snippet
+    //                     if(r.message){
+    //                         frm.set_value("kf_contact_name",r.message.full_name)
+    //                         frm.set_value("kf_contact_no",r.message.mobile_no)
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     } else {
+    //         frm.set_value("kf_contact_name","")
+    //         frm.set_value("kf_contact_no","")
+    //     }
+    // },
     onload:function(frm) {
         var item_quantity = 0
         $.each(frm.doc.items, function(i,v) {                       
@@ -97,9 +104,16 @@ frappe.ui.form.on("Material Request",{
         }
         if(frm.is_new()){
             frm.set_value("tc_name",'Standard Template')
-            frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","8291900219")
+            frappe.model.get_value('KF Email Settings', {'name': 'KF Email Settings'}, 'x',
+              function(d) {
+                console.log(d)
+                frm.set_value("kf_contact_name",d.contact_name)            
+                frm.set_value("kf_contact_email",d.contact_email)
+                frm.set_value("kf_contact_no",d.contact_number)
+              })
+            // frm.set_value("kf_contact_name","Aniruddh Singh")
+            // frm.set_value("kf_contact_email","aniruddh.singh@in.knightfrank.com")
+            // frm.set_value("kf_contact_no","9606061085")
         }
         frm.set_query('kf_customer_shipping_address', function(doc) {
             if(!doc.kf_customer) {

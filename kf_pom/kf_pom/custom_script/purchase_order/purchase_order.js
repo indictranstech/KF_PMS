@@ -52,10 +52,16 @@ frappe.ui.form.on("Purchase Order",{
 		}
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
-			frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","8291900219")
-
+			// frm.set_value("kf_contact_name","Aniruddh Singh")
+   //          frm.set_value("kf_contact_email","aniruddh.singh@in.knightfrank.com")
+   //          frm.set_value("kf_contact_no","9606061085")
+   			frappe.model.get_value('KF Email Settings', {'name': 'KF Email Settings'}, 'x',
+              function(d) {
+                // console.log(d)
+                frm.set_value("kf_contact_name",d.contact_name)            
+                frm.set_value("kf_contact_email",d.contact_email)
+                frm.set_value("kf_contact_no",d.contact_number)
+              })
 		}
 	},
 	is_internal_po: function(frm) {
@@ -143,10 +149,16 @@ frappe.ui.form.on("Purchase Order",{
 
 		if(frm.is_new()){
 			frm.set_value("tc_name",'Standard Template')
-			frm.set_value("kf_contact_name","Sarvesh Tiwari")
-            frm.set_value("kf_contact_email","sarvesh.tiwari@in.knightfrank.com")
-            frm.set_value("kf_contact_no","8291900219")
-
+			// frm.set_value("kf_contact_name","Aniruddh Singh")
+   //          frm.set_value("kf_contact_email","aniruddh.singh@in.knightfrank.com")
+   //          frm.set_value("kf_contact_no","9606061085")
+   			frappe.model.get_value('KF Email Settings', {'name': 'KF Email Settings'}, 'x',
+              function(d) {
+                console.log(d)
+                frm.set_value("kf_contact_name",d.contact_name)            
+                frm.set_value("kf_contact_email",d.contact_email)
+                frm.set_value("kf_contact_no",d.contact_number)
+              })
 			if(frm.doc.company_billing_add){
 				frm.set_value('billing_address',frm.doc.company_billing_add)
 			}
@@ -194,33 +206,33 @@ frappe.ui.form.on("Purchase Order",{
 	        }
     	}
     },
-	kf_contact_email: function(frm) {
-        if(frm.doc.kf_contact_email) {
-            frappe.call({
-                method: 'frappe.client.get_value',
-                args: {
-                    'doctype': 'User',
-                    'filters': {'name': frm.doc.kf_contact_email},
-                    'fieldname': [
-                        'mobile_no',
-                        'full_name'
-                    ]
-                },
-                callback: function(r) {
-                    if (!r.exc) {
-                        // code snippet
-                        if(r.message){
-                            frm.set_value("kf_contact_name",r.message.full_name)
-                            frm.set_value("kf_contact_no",r.message.mobile_no)
-                        }
-                    }
-                }
-            });
-        } else {
-            frm.set_value("kf_contact_name","")
-            frm.set_value("kf_contact_no","")
-        }
-    },
+	// kf_contact_email: function(frm) {
+ //        if(frm.doc.kf_contact_email) {
+ //            frappe.call({
+ //                method: 'frappe.client.get_value',
+ //                args: {
+ //                    'doctype': 'User',
+ //                    'filters': {'name': frm.doc.kf_contact_email},
+ //                    'fieldname': [
+ //                        'mobile_no',
+ //                        'full_name'
+ //                    ]
+ //                },
+ //                callback: function(r) {
+ //                    if (!r.exc) {
+ //                        // code snippet
+ //                        if(r.message){
+ //                            frm.set_value("kf_contact_name",r.message.full_name)
+ //                            frm.set_value("kf_contact_no",r.message.mobile_no)
+ //                        }
+ //                    }
+ //                }
+ //            });
+ //        } else {
+ //            frm.set_value("kf_contact_name","")
+ //            frm.set_value("kf_contact_no","")
+ //        }
+ //    },
 	company_billing_add:function(frm) {
 		if(frm.doc.company_billing_add) {
 			frm.set_value('billing_address',frm.doc.company_billing_add)
