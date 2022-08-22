@@ -7,7 +7,11 @@
  "field_order": [
   "email_configuration",
   "procurement_approver",
-  "director_approver"
+  "director_approver",
+  "column_break_4",
+  "contact_name",
+  "contact_email",
+  "contact_number"
  ],
  "fields": [
   {
@@ -27,12 +31,31 @@
    "fieldtype": "Link",
    "label": "Director Approver",
    "options": "User"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_name",
+   "fieldtype": "Data",
+   "label": "Contact Name"
+  },
+  {
+   "fieldname": "contact_email",
+   "fieldtype": "Data",
+   "label": "Contact Email"
+  },
+  {
+   "fieldname": "contact_number",
+   "fieldtype": "Data",
+   "label": "Contact Number"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-09-08 16:26:50.316701",
+ "modified": "2022-05-17 19:02:15.474173",
  "modified_by": "Administrator",
  "module": "KF_POM",
  "name": "KF Email Settings",
