@@ -113,7 +113,8 @@ def validate(doc,method=None):
 		if s_email["email_configuration"] == "1":
 			frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
-def get_permission_query_conditions(doctype):
+# def get_permission_query_conditions(doctype):
+def get_permission_query_conditions(user=None, doctype=None):
 	#Commercial Approver can see only the MR for himself
 	if frappe.session.user == "Administrator":
 		return ""

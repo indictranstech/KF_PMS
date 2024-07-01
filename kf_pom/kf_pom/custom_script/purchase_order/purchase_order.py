@@ -117,7 +117,8 @@ def validate(doc,method=None):
 			frappe.sendmail(recipients=r_email,subject=subject,content=msg)
 
 	
-def get_permission_query_conditions(doctype):
+# def get_permission_query_conditions(doctype):
+def get_permission_query_conditions(user=None, doctype=None):
 	
 	if frappe.session.user == "Administrator":
 		return ""
