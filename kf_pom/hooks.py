@@ -121,23 +121,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"kf_pom.tasks.all"
 # 	],
 # 	"daily": [
 # 		"kf_pom.tasks.daily"
 # 	],
-# 	"hourly": [
-# 		"kf_pom.tasks.hourly"
-# 	],
+	"hourly": [
+		"kf_pom.kf_pom.custom_script.email_queue.email_queue.delete_email_queues"
+	],
 # 	"weekly": [
 # 		"kf_pom.tasks.weekly"
 # 	]
 # 	"monthly": [
 # 		"kf_pom.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
