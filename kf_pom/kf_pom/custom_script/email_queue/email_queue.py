@@ -10,7 +10,7 @@ def delete_email_queues():
     # if not frappe.utils.get_datetime().weekday() in [1,3,5,6]:
     c = str(now_datetime())[11:13]
     d = int(c)
-    a = "11"
+    a = "01"
     b = int(a)
     if frappe.utils.get_datetime().weekday() in [0,1,2,3,4,5,6] and d == b:
 
